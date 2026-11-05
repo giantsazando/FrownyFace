@@ -103,19 +103,18 @@ export function buildFont(scene: Phaser.Scene): void {
       for (let x = 0; x < GLYPH_W; x++) if (g[y][x]) ctx.fillRect(gx + x, gy + y, 1, 1);
   });
   scene.textures.addCanvas(FONT_KEY, c);
-  const data = Phaser.GameObjects.RetroFont.Parse(scene, {
+  const entry = Phaser.GameObjects.RetroFont.Parse(scene, {
     image: FONT_KEY,
     width: CELL_W,
     height: CELL_H,
     chars: FONT_CHARS,
     charsPerRow: FONT_PER_ROW,
-    'offset.x': 0,
-    'offset.y': 0,
-    'spacing.x': 0,
-    'spacing.y': 0,
+    offset: { x: 0, y: 0 },
+    spacing: { x: 0, y: 0 },
     lineSpacing: 2,
   } as unknown as Phaser.Types.GameObjects.BitmapText.RetroFontConfig);
-  scene.cache.bitmapFont.add(FONT_KEY, { data, texture: FONT_KEY, frame: null });
+  // Parse returns the full cache entry ({ data, texture, frame }).
+  scene.cache.bitmapFont.add(FONT_KEY, entry);
 
   // Vertical digit strip (0-9 then 0 again) for odometer meters.
   const [dc, dctx] = makeCanvas(CELL_W, CELL_H * 11);

@@ -7,7 +7,7 @@ export const PLAZA1: MapDef = {
   id: 'plaza1',
   name: 'Everglow Plaza - Food Court',
   music: 'plaza',
-  darkness: 0.5,
+  darkness: 0.66,
   tint: 0x0a1a1a,
   onEnter: { script: 'plazaEnter', unless: 'plazaEntered' },
   tiles: [
@@ -48,7 +48,7 @@ export const PLAZA1: MapDef = {
     { kind: 'cooler', id: 'p1c3', x: 27, y: 17, money: 30 },
     { kind: 'enemy', id: 'f1', x: 8, y: 6, group: 'takeout1', sprite: 'enemy_takeout' },
     { kind: 'enemy', id: 'f2', x: 20, y: 9, group: 'cartBag', sprite: 'enemy_cart' },
-    { kind: 'enemy', id: 'f3', x: 11, y: 14, group: 'takeout2', sprite: 'enemy_takeout' },
+    { kind: 'enemy', id: 'f3', x: 8, y: 13, group: 'takeout2', sprite: 'enemy_takeout' },
     { kind: 'enemy', id: 'f4', x: 22, y: 15, group: 'cart1', sprite: 'enemy_cart' },
     { kind: 'enemy', id: 'f5', x: 18, y: 4, group: 'takeout1', sprite: 'enemy_takeout' },
   ],
@@ -60,7 +60,7 @@ export const PLAZA2: MapDef = {
   id: 'plaza2',
   name: 'Everglow Plaza - Dollar Paradise',
   music: 'plaza',
-  darkness: 0.58,
+  darkness: 0.7,
   tint: 0x1a0a1a,
   onEnter: { script: 'dollarEnter', unless: 'dollarEntered' },
   tiles: [
