@@ -142,6 +142,7 @@ export class OverworldScene extends Phaser.Scene {
 
     sound.music(this.map.music);
     this.showMapName();
+    this.resetCamera();
     cam.fadeIn(350, 0, 0, 0);
 
     this.time.addEvent({
@@ -152,6 +153,7 @@ export class OverworldScene extends Phaser.Scene {
 
     this.events.on(Phaser.Scenes.Events.RESUME, () => {
       sound.music(this.map.music);
+      this.resetCamera();
       this.cameras.main.fadeIn(300, 0, 0, 0);
     });
 
@@ -165,6 +167,14 @@ export class OverworldScene extends Phaser.Scene {
     }
 
     (window as unknown as { __SWAMP?: unknown }).__SWAMP = { scene: this, session };
+  }
+
+  /** Undo any battle-transition camera effects so the view is always 1:1. */
+  private resetCamera(): void {
+    const cam = this.cameras.main;
+    this.tweens.killTweensOf(cam);
+    cam.resetFX();
+    cam.setZoom(1);
   }
 
   get busy(): boolean {
@@ -654,9 +664,12 @@ export class OverworldScene extends Phaser.Scene {
       const cam = this.cameras.main;
       cam.flash(120, 255, 255, 255);
       cam.shake(350, 0.01);
-      this.tweens.add({ targets: cam, zoom: 1.6, duration: 450, ease: 'Quad.in' });
+      const zoomTween = this.tweens.add({ targets: cam, zoom: 1.6, duration: 450, ease: 'Quad.in' });
       cam.fadeOut(450, 0, 0, 0);
       cam.once('camerafadeoutcomplete', () => {
+        // The fade can finish a frame before the zoom tween; stop the tween so it
+        // can't re-apply the zoom after the battle resumes this scene.
+        zoomTween.stop();
         cam.setZoom(1);
         this.scene.launch('Battle', {
           group,

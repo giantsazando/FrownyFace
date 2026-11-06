@@ -38,6 +38,14 @@ async function teleport(x, y, facing) {
   await wait(100);
 }
 
+const camZoom = () => ev(() => window.__GAME.scene.getScene('Overworld').cameras.main.zoom);
+async function assertZoom(label) {
+  await wait(800);
+  const z = await camZoom();
+  log(`camera zoom after ${label}:`, z);
+  if (z !== 1) errors.push(`Camera zoom is ${z} after ${label} (expected 1)`);
+}
+
 const notBusy = () => ev(() => { const s = window.__GAME.scene.getScene('Overworld'); return s.sys.isActive() && !s.busy; });
 
 await page.goto('http://localhost:5198/');
@@ -61,6 +69,8 @@ await mashUntil(async () => (await activeScenes()).includes('Battle'), 40, 'Arro
 log('battle started:', await activeScenes());
 await mashUntil(async () => !(await activeScenes()).includes('Battle'), 600, 'z', 150);
 log('battle over. scenes:', await activeScenes(), 'party:', JSON.stringify(await ev(() => window.__SWAMP.session.gs.data.party)));
+await assertZoom('town battle');
+await page.screenshot({ path: (process.argv[2] ?? 'playthrough-end.png').replace(/\.png$/, '') + '-after-battle.png' });
 
 // Enter the plaza through the door at (32,12).
 await teleport(32, 13, 'up');
@@ -93,6 +103,7 @@ await mashUntil(async () => (await flags()).anchorEntered && (await notBusy()), 
 await teleport(11, 5, 'up');
 await press('z');
 const won = await mashUntil(async () => (await flags()).bossDefeated || (await activeScenes()).includes('GameOver'), 1500, 'z', 120);
+if ((await activeScenes()).includes('Overworld')) await assertZoom('boss battle');
 log('boss result flags:', JSON.stringify(await flags()), 'scenes', await activeScenes(), won);
 await mashUntil(async () => (await activeScenes()).includes('Ending'), 200, 'z', 150);
 log('scenes:', await activeScenes());
