@@ -7,18 +7,21 @@ pond behind the cul-de-sac. The town of Palmetto Hollow thinks she's an urban
 legend. She protects it anyway. Tonight, a payphone that hasn't rung since 2003
 is ringing, and the dead strip mall across the road has started to *grow*.
 
-## Play
+## Download & play (Windows)
 
-```bash
-npm install
-npm run dev        # open the printed localhost URL
-```
+1. Open the repository's **Releases** page on GitHub.
+2. Download `SWAMPLIGHT-<version>-portable.exe` from the latest release.
+3. Double-click it. Nothing is installed; the game opens in its own window.
+
+The .exe isn't code-signed, so Windows SmartScreen may say "Windows protected your PC".
+Click **More info**, then **Run anyway**. Saves are kept between launches.
 
 | Key | Action |
 | --- | --- |
 | Arrows / WASD | Move, menu cursor |
 | Z / Enter / Space | Talk, confirm, advance text |
 | X / Esc | Cancel, open menu (Goods / Status) |
+| F11 | Toggle fullscreen (desktop app) |
 
 ## The MVP slice
 
@@ -54,15 +57,31 @@ Content is data-driven: add an enemy in `src/data/enemies.ts` (plus art in
 `src/data/dialogue/scripts.ts`. `npm test` validates that maps are rectangular,
 entities stand on walkable tiles, and every script/item/sprite reference resolves.
 
-## Scripts
+## For developers
 
 ```bash
+npm install
+npm run dev                      # play in the browser with hot reload
+npm run desktop                  # play in the Electron desktop window
 npm test                         # unit + content validation
 npm run typecheck
-npm run build                    # production build in dist/
+npm run build                    # static web build in dist/
+npm run dist:win                 # Windows portable .exe in release/ (run on Windows)
 node scripts/screenshots.mjs     # screenshots of key screens (needs Playwright + Chromium)
 node scripts/playthrough.mjs     # automated run: intro → payphone → plaza → Ibis → boss → ending
 ```
+
+### Releasing a new .exe
+
+The **Build Windows exe** GitHub Actions workflow (`.github/workflows/release.yml`) runs on a
+Windows runner, runs the tests, and builds the portable .exe with electron-builder.
+
+- Push a version tag to publish a GitHub Release with the .exe attached:
+  bump `version` in `package.json`, then `git tag v0.1.0 && git push origin v0.1.0`.
+- Or run the workflow manually from the Actions tab; the .exe is attached to that run as an
+  artifact (no public release).
+
+The app icon (`build/icon.png`) is generated from Okee's sprite: `npm run icon`.
 
 ### Debug entry points
 
