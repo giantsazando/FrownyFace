@@ -209,4 +209,126 @@ export const BATTLERS: Record<string, BattlerArt> = {
       for (const [x, y] of [[20, 98], [96, 96], [58, 104], [80, 88]]) { ellipse(c, x, y, 2, 2, 'e'); px(c, x, y, 'k'); }
     },
   },
+  catfish: {
+    w: 76, h: 52, frames: 2,
+    paint: (c, f) => {
+      // body
+      ellipse(c, 36, 24, 26, 11, '#4a3f2a');
+      ellipse(c, 36, 29, 22, 5, '#8a7a5a');
+      for (let i = 0; i < 9; i++) ellipse(c, 16 + i * 5, 20 + (i % 2) * 3, 2, 1.5, '#2c2418');
+      // tail
+      poly(c, [10, 24, 0, 14, 2, 24, 0, 34], '#3a3020');
+      // head + eye
+      ellipse(c, 60, 23, 10, 9, '#4a3f2a');
+      ellipse(c, 64, 19, 2, 2, 'e'); px(c, 64, 19, 'k');
+      px(c, 66, 27, 'k', 6, 1);
+      // whiskers
+      for (const [dy, len] of [[-2, 14], [2, 16], [5, 12]]) for (let i = 0; i < len; i++) px(c, 68 + i * 0.5, 26 + dy + Math.sin(i / 3 + f) * 2, 'W');
+      // fins it walks on
+      const step = f ? 3 : -3;
+      poly(c, [24, 32, 20 + step, 46, 28 + step, 46], '#3a3020');
+      poly(c, [46, 32, 44 - step, 46, 52 - step, 46], '#3a3020');
+      px(c, 16 + step, 46, 'k', 40, 1);
+      // slime drips
+      px(c, 30, 35, 'l', 1, 4 + f * 2); px(c, 52, 34, 'l', 1, 3);
+    },
+  },
+  snail: {
+    w: 64, h: 60, frames: 2,
+    paint: (c, f) => {
+      // foot
+      ellipse(c, 32, 50, 28, 6, '#c8b888');
+      ellipse(c, 56, 44, 6, 5, '#c8b888');
+      px(c, 58, 34, 'b', 1, 8); px(c, 61, 35, 'b', 1, 7);
+      ellipse(c, 58, 34, 1.5, 1.5, 'k'); ellipse(c, 61, 35, 1.5, 1.5, 'k');
+      // shell spiral
+      ellipse(c, 28, 34, 20, 17, 'n');
+      ellipse(c, 30, 33, 14, 12, 'N');
+      ellipse(c, 31, 33, 9, 8, 'n');
+      ellipse(c, 32, 33, 4, 4, 'N');
+      // egg clusters, pulsing
+      const r = seeded(51);
+      for (let i = 0; i < 26; i++) {
+        const x = 8 + r() * 36, y = 6 + r() * 22;
+        const sz = 2 + r() * 1.5 + (f && i % 3 === 0 ? 0.8 : 0);
+        ellipse(c, x, y, sz, sz, i % 4 ? 'p' : 'P');
+        if (i % 5 === 0) px(c, x, y, 'k');
+      }
+    },
+  },
+  doll: {
+    w: 48, h: 70, frames: 2,
+    paint: (c, f) => {
+      // dress
+      poly(c, [10, 34, 38, 34, 44, 60, 4, 60], '#d88aa8');
+      for (let x = 8; x < 42; x += 6) px(c, x, 44, 'P', 2, 2);
+      // arms
+      px(c, 4, 34 + f * 2, 'W', 5, 16); px(c, 39, 34, 'W', 5, 16);
+      // legs
+      px(c, 14, 60, 'W', 6, 9); px(c, 28, 60, 'W', 6, 9 - f * 2);
+      // head
+      ellipse(c, 24, 20, 14, 15, '#e8e0d8');
+      // seaweed hair
+      for (let i = 0; i < 9; i++) {
+        const x0 = 11 + i * 3;
+        for (let y = 4; y < 14 + (i % 3) * 8; y++) px(c, x0 + Math.sin(y / 3 + i) * 1.5, y, i % 2 ? 'G' : 'g');
+      }
+      // one eye open, one socket
+      ellipse(c, 18 + f * 12, 20, 3.5, 3.5, 'w'); ellipse(c, 18 + f * 12, 20, 1.6, 1.6, 'B'); px(c, 18 + f * 12, 20, 'k');
+      ellipse(c, 30 - f * 12, 20, 3, 3, 'k');
+      // cracked smile, water stains
+      px(c, 19, 28, 'r', 10, 1); px(c, 21, 29, 'r', 1, 2); px(c, 26, 29, 'r', 1, 2);
+      px(c, 33, 12, 'm', 1, 6); px(c, 34, 18, 'm', 1, 4);
+      px(c, 6, 66, 'C', 36, 2);
+    },
+  },
+  lionfish: {
+    w: 150, h: 116, frames: 2,
+    paint: (c, f) => {
+      const cx = 70, cy = 60;
+      // dorsal spines: long, striped, venom-tipped
+      for (let i = 0; i < 15; i++) {
+        const a = -Math.PI * 0.95 + (i / 14) * Math.PI * 0.85 + (f ? 0.03 : -0.02);
+        const len = 44 + (i % 3) * 8;
+        for (let r = 14; r < len; r++) {
+          const col = r > len - 4 ? '#5e1020' : Math.floor(r / 5) % 2 ? 'w' : 'r';
+          px(c, cx + Math.cos(a) * r, cy + Math.sin(a) * r, col, 2, 2);
+        }
+      }
+      // pectoral fins: huge fans below
+      for (let i = 0; i < 11; i++) {
+        const a = Math.PI * 0.2 + (i / 10) * Math.PI * 0.6 + (f ? -0.05 : 0.05);
+        const len = 38 + (i % 2) * 8;
+        for (let r = 10; r < len; r++) px(c, cx - 8 + Math.cos(a) * r, cy + 4 + Math.sin(a) * r, Math.floor(r / 4) % 2 ? 'P' : 'W', 2, 1);
+      }
+      // tail fan
+      for (let i = 0; i < 7; i++) {
+        const a = Math.PI * 0.8 + (i / 6) * Math.PI * 0.4;
+        for (let r = 30; r < 52; r++) px(c, cx + Math.cos(a) * r, cy + Math.sin(a) * r, Math.floor(r / 4) % 2 ? 'r' : 'w', 2, 1);
+      }
+      // body with stripes
+      ellipse(c, cx, cy, 34, 22, 'r');
+      c.save();
+      c.beginPath();
+      c.ellipse(cx, cy, 34, 22, 0, 0, Math.PI * 2);
+      c.clip();
+      for (let x = cx - 34; x < cx + 34; x += 7) px(c, x, cy - 24, 'w', 3, 48);
+      c.restore();
+      // too many eyes along the flank
+      for (const [x, y] of [[cx - 16, cy - 6], [cx - 4, cy + 8], [cx + 6, cy - 10]]) {
+        ellipse(c, x, y, 2.5, 2.5, 'e');
+        px(c, x, y, 'k');
+      }
+      // head
+      ellipse(c, cx + 34, cy + 2, 16, 15, '#a82a3a');
+      ellipse(c, cx + 38, cy - 6, 6, 6, 'e');
+      ellipse(c, cx + 39, cy - 6, 2, 4, 'k');
+      // mouth with human teeth
+      ellipse(c, cx + 44, cy + 9, 7, 4 + f * 2, 'k');
+      for (let i = 0; i < 5; i++) px(c, cx + 39 + i * 2.4, cy + 6, i === 3 ? 'y' : 'w', 2, 2);
+      for (let i = 0; i < 4; i++) px(c, cx + 40 + i * 2.4, cy + 11 + f * 2, 'w', 2, 2);
+      // venom drip
+      px(c, cx + 46, cy + 14 + f * 2, '#5e1020', 1, 4 + f * 3);
+    },
+  },
 };

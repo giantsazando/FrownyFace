@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { UI } from '../art/palette';
 import { SCRIPTS, type Step } from '../data/dialogue/scripts';
-import { ENCOUNTER_GROUPS } from '../data/enemies';
+import { ENCOUNTER_GROUPS, ENEMIES } from '../data/enemies';
 import { ITEMS, SHOPS } from '../data/items';
 import { MAPS, type Cond, type Entity, type MapDef } from '../data/maps';
 import { MEMBERS, type MemberId, skillsAt, statsAt, xpForLevel } from '../data/party';
@@ -70,7 +70,7 @@ export class OverworldScene extends Phaser.Scene {
   private controls!: Controls;
   private textbox!: TextBox;
   private player!: Phaser.GameObjects.Sprite;
-  private follower: Phaser.GameObjects.Sprite | null = null;
+  private followers: { id: MemberId; sprite: Phaser.GameObjects.Sprite }[] = [];
   private trail: { x: number; y: number; moving: boolean }[] = [];
   private facing: Facing = 'down';
   private entities: Live[] = [];
@@ -96,7 +96,7 @@ export class OverworldScene extends Phaser.Scene {
     this.entities = [];
     this.glows = [];
     this.trail = [];
-    this.follower = null;
+    this.followers = [];
     this.scriptDepth = 0;
     this.transitioning = false;
     this.invuln = 0;
@@ -118,9 +118,11 @@ export class OverworldScene extends Phaser.Scene {
     // player
     this.player = this.add.sprite(data.x * TS + 8, data.y * TS + 15, 'okee', 0).setOrigin(0.5, 1);
     this.setFacingFrame(false);
-    this.glows.push({ x: 0, y: 0, key: 'light_m', r: 36, follow: this.player });
-    if (session.gs.member('ibis')) this.spawnFollower();
-    for (let i = 0; i < 16; i++) this.trail.push({ x: this.player.x, y: this.player.y, moving: false });
+    // In the darkest places Okee's eyeshine carries further, so the layout stays readable.
+    const big = this.map.darkness >= 0.8;
+    this.glows.push({ x: 0, y: 0, key: big ? 'light_l' : 'light_m', r: big ? 56 : 36, follow: this.player });
+    for (const m of session.gs.data.party) if (m.id !== 'okee') this.spawnFollower(m.id);
+    for (let i = 0; i < 32; i++) this.trail.push({ x: this.player.x, y: this.player.y, moving: false });
 
     for (const def of this.map.entities) this.spawnEntity(def);
 
@@ -157,8 +159,9 @@ export class OverworldScene extends Phaser.Scene {
       this.cameras.main.fadeIn(300, 0, 0, 0);
     });
 
-    if (this.map.onEnter && condOk(this.map.onEnter)) {
-      const s = this.map.onEnter.script;
+    const enter = this.map.onEnter?.find((e) => condOk(e));
+    if (enter) {
+      const s = enter.script;
       this.scriptDepth++;
       this.time.delayedCall(450, async () => {
         this.scriptDepth--;
@@ -230,9 +233,10 @@ export class OverworldScene extends Phaser.Scene {
     );
   }
 
-  private spawnFollower(): void {
-    if (this.follower) return;
-    this.follower = this.add.sprite(this.player.x, this.player.y, 'ibis', 0).setOrigin(0.5, 1);
+  private spawnFollower(id: MemberId): void {
+    if (this.followers.some((f) => f.id === id)) return;
+    const sprite = this.add.sprite(this.player.x, this.player.y, id, 0).setOrigin(0.5, 1);
+    this.followers.push({ id, sprite });
   }
 
   private spawnEntity(def: Entity): void {
@@ -245,19 +249,27 @@ export class OverworldScene extends Phaser.Scene {
       case 'npc':
         live.sprite = this.add.sprite(x, y + 1, def.sprite, 0).setOrigin(0.5, 1).setFlipX(!!def.flip);
         live.solid = true;
-        if (def.sprite === 'decor_bossMap') {
+        if (def.sprite === 'decor_bossMap' || def.sprite === 'decor_lionfishMap') {
           live.sprite.setScale(1.5);
           this.glows.push({ x, y: y - 20, key: 'light_l', r: 56, flicker: true, off: 0 });
           this.tweens.add({ targets: live.sprite, scaleY: 1.05, yoyo: true, repeat: -1, duration: 900 });
         } else if (def.sprite.startsWith('npc_')) {
           this.tweens.add({ targets: live.sprite, scaleY: 0.94, yoyo: true, repeat: -1, duration: 700 + Math.random() * 500, delay: Math.random() * 500 });
         }
+        if (def.sprite.startsWith('decor_') && live.sprite.texture.frameTotal > 2) {
+          const spr = live.sprite;
+          this.time.addEvent({ delay: 380, loop: true, callback: () => spr.active && spr.setFrame((Number(spr.frame.name) + 1) % 2) });
+        }
         if (def.sprite === 'decor_vending') this.glows.push({ x, y: y - 10, key: 'light_s', r: 20 });
         break;
       case 'sign':
         if (def.sprite) {
-          live.sprite = this.add.sprite(x, y + 1, def.sprite).setOrigin(0.5, 1);
+          const spr = this.add.sprite(x, y + 1, def.sprite, 0).setOrigin(0.5, 1);
+          live.sprite = spr;
           live.solid = true;
+          if (spr.texture.frameTotal > 2) {
+            this.time.addEvent({ delay: 300, loop: true, callback: () => spr.active && spr.setFrame((Number(spr.frame.name) + 1) % 2) });
+          }
         }
         break;
       case 'cooler':
@@ -365,7 +377,7 @@ export class OverworldScene extends Phaser.Scene {
 
     for (const e of this.entities) e.sprite?.setDepth(e.y);
     this.player.setDepth(this.player.y);
-    this.follower?.setDepth(this.follower.y - 0.5);
+    this.followers.forEach((f, k) => f.sprite.setDepth(f.sprite.y - 0.5 - k * 0.1));
 
     this.drawDarkness(dt);
   }
@@ -387,18 +399,18 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private updateFollower(moving: boolean): void {
-    if (!this.follower) return;
-    const idx = Math.max(0, this.trail.length - 14);
-    const t = this.trail[idx];
-    const dx = t.x - this.follower.x;
-    if (Math.abs(dx) > 0.2) this.follower.setFlipX(dx < 0);
-    this.follower.setPosition(t.x, t.y);
-    if (moving) {
-      if (!this.follower.anims.isPlaying) this.follower.play('ibis-walk');
-    } else {
-      this.follower.anims.stop();
-      this.follower.setFrame(0);
-    }
+    this.followers.forEach(({ id, sprite }, k) => {
+      const t = this.trail[Math.max(0, this.trail.length - 14 * (k + 1))];
+      const dx = t.x - sprite.x;
+      if (Math.abs(dx) > 0.2) sprite.setFlipX(dx < 0);
+      sprite.setPosition(t.x, t.y);
+      if (moving) {
+        if (!sprite.anims.isPlaying) sprite.play(`${id}-walk`);
+      } else {
+        sprite.anims.stop();
+        sprite.setFrame(0);
+      }
+    });
   }
 
   private updateMovers(dt: number): void {
@@ -596,7 +608,7 @@ export class OverworldScene extends Phaser.Scene {
       if (outcome !== 'win') return 'abort';
     } else if ('join' in s) {
       gs.addMember(s.join);
-      this.spawnFollower();
+      this.spawnFollower(s.join);
       this.trail = this.trail.map(() => ({ x: this.player.x, y: this.player.y, moving: false }));
     } else if ('sfx' in s) sound.sfx(s.sfx);
     else if ('shake' in s) {
@@ -605,7 +617,14 @@ export class OverworldScene extends Phaser.Scene {
     } else if ('flash' in s) this.cameras.main.flash(s.flash);
     else if ('wait' in s) await this.wait(s.wait);
     else if ('music' in s) sound.music(s.music);
-    else if ('ending' in s) {
+    else if ('warp' in s) {
+      this.transitioning = true;
+      this.textbox.hide();
+      this.cameras.main.fadeOut(400, 0, 0, 0);
+      await this.wait(450);
+      this.scene.restart({ mapId: s.warp, x: s.x, y: s.y, facing: s.facing } as OverworldData);
+      return 'abort';
+    } else if ('ending' in s) {
       this.transitioning = true;
       this.textbox.hide();
       this.cameras.main.fadeOut(1500, 255, 255, 255);
@@ -660,7 +679,7 @@ export class OverworldScene extends Phaser.Scene {
     this.transitioning = true;
     return new Promise((resolve) => {
       sound.sfx('encounter');
-      sound.music(ENCOUNTER_GROUPS[group].includes('boss') ? 'boss' : 'battle');
+      sound.music(ENCOUNTER_GROUPS[group].some((id) => ENEMIES[id].boss) ? 'boss' : 'battle');
       const cam = this.cameras.main;
       cam.flash(120, 255, 255, 255);
       cam.shake(350, 0.01);

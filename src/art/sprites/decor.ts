@@ -102,6 +102,36 @@ export const DECOR: Record<string, DecorArt> = {
       px(c, 2, 20, 'k', 9, 2); px(c, 1, 0, 'p', 14, 1);
     },
   },
+  whirlpool: {
+    w: 16, h: 16, frames: 2,
+    paint: (c, f) => {
+      for (let i = 0; i < 40; i++) {
+        const a = i * 0.45 + f * 0.8;
+        const r = 7 - i * 0.16;
+        if (r <= 0) break;
+        px(c, 8 + Math.cos(a) * r, 8 + Math.sin(a) * r * 0.7, i % 3 ? '#3fb8af' : '#1d4552', 1, 1);
+      }
+      px(c, 7, 7, 'k', 2, 2);
+    },
+  },
+  lionfishMap: {
+    w: 48, h: 40, frames: 2,
+    paint: (c, f) => {
+      const cx = 24, cy = 22;
+      for (let i = 0; i < 13; i++) {
+        const a = -Math.PI * 0.95 + (i / 12) * Math.PI * 0.9 + (f ? 0.04 : 0);
+        for (let r = 6; r < 18; r++) px(c, cx + Math.cos(a) * r, cy + Math.sin(a) * r, r % 4 < 2 ? 'r' : 'w');
+      }
+      for (let i = 0; i < 7; i++) {
+        const a = Math.PI * 0.15 + (i / 6) * Math.PI * 0.7;
+        for (let r = 6; r < 15; r++) px(c, cx + Math.cos(a) * r, cy + Math.sin(a) * r, r % 4 < 2 ? 'P' : 'W');
+      }
+      ellipse(c, cx, cy, 11, 7, 'r');
+      for (let x = cx - 9; x < cx + 10; x += 3) px(c, x, cy - 6, 'w', 1, 12);
+      ellipse(c, cx + 8, cy - 1, 2, 2, f ? 'r' : 'e');
+      px(c, cx + 10, cy + 3, 'w', 3, 1);
+    },
+  },
   sparkle: {
     w: 8, h: 8, frames: 1,
     paint: (c) => { px(c, 3, 0, 'w', 2, 8); px(c, 0, 3, 'w', 8, 2); px(c, 3, 3, 'e', 2, 2); },

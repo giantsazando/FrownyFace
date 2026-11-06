@@ -73,6 +73,28 @@ export const TILE_PAINTERS: Record<string, (ctx: Ctx, rnd: () => number) => void
   },
   escalator: (c) => { fill(c, '#4a4352'); for (let y = 0; y < 16; y += 3) fill(c, '#7d7484', 1, y, 14, 1); fill(c, '#241a2e', 0, 0, 1, 16); fill(c, '#241a2e', 15, 0, 1, 16); },
   doorway: (c) => { fill(c, '#0b0710'); fill(c, '#f07aa8', 0, 0, 1, 16); fill(c, '#f07aa8', 15, 0, 1, 16); fill(c, '#f07aa8', 0, 0, 16, 1); fill(c, '#241a2e', 1, 12, 14, 4); },
+  wetConcrete0: (c, r) => { fill(c, '#343e3c'); speckle(c, r, '#2a3432', 14); speckle(c, r, '#4a5a52', 6); },
+  wetConcrete1: (c, r) => { fill(c, '#343e3c'); speckle(c, r, '#2a3432', 10); fill(c, '#1d2a2a', 4, 9, 6, 2); fill(c, '#3f6a6a', 5, 9, 1, 1); },
+  drainWall: (c, r) => {
+    fill(c, '#1d2a26');
+    for (let y = 3; y < 16; y += 5) fill(c, '#14201c', 0, y, 16, 1);
+    for (let i = 0; i < 3; i++) { const x = Math.floor(r() * 15); fill(c, '#4a6b3a', x, 0, 1, 4 + Math.floor(r() * 9)); }
+  },
+  murk: (c, r) => { fill(c, '#06100e'); speckle(c, r, '#0f2420', 6, 3, 1); if (r() < 0.2) { fill(c, '#fff27a', 6, 7, 1, 1); fill(c, '#fff27a', 9, 7, 1, 1); } },
+  shallows: (c, r) => { TILE_PAINTERS.wetConcrete0(c, r); c.fillStyle = '#123a44'; c.beginPath(); c.ellipse(8, 8, 7, 5, 0, 0, 7); c.fill(); fill(c, '#3f8a8a', 4, 6, 3, 1); },
+  fungus: (c, r) => {
+    TILE_PAINTERS.wetConcrete0(c, r);
+    for (let i = 0; i < 4; i++) { const x = 2 + Math.floor(r() * 11), y = 4 + Math.floor(r() * 9); fill(c, '#d8d08a', x + 1, y + 1, 1, 2); fill(c, i % 2 ? '#b6d84b' : '#3fb8af', x, y, 3, 1); }
+  },
+  grate: (c) => { fill(c, '#0b0710'); for (let i = 1; i < 16; i += 3) { fill(c, '#5a5262', i, 0, 1, 16); fill(c, '#5a5262', 0, i, 16, 1); } },
+  rubble: (c, r) => { fill(c, '#06100e'); for (let i = 0; i < 9; i++) { const s = 3 + Math.floor(r() * 4); fill(c, i % 3 ? '#4a4352' : '#2c4a24', Math.floor(r() * (16 - s)), Math.floor(r() * (16 - s)), s, s - 1); } },
+  eggs: (c, r) => {
+    fill(c, '#1d2a26');
+    for (let i = 0; i < 26; i++) { const x = Math.floor(r() * 14), y = Math.floor(r() * 14); fill(c, i % 4 ? '#f07aa8' : '#a8486e', x, y, 2, 2); if (i % 6 === 0) fill(c, '#0b0710', x, y, 1, 1); }
+  },
+  fleshCoral: (c, r) => { fill(c, '#3a1420'); speckle(c, r, '#5e2a38', 20, 2, 2); speckle(c, r, '#c23b4a', 8); speckle(c, r, '#f07aa8', 4); },
+  boneSand0: (c, r) => { fill(c, '#5a5040'); speckle(c, r, '#6a6050', 14); speckle(c, r, '#4a4030', 8); },
+  boneSand1: (c, r) => { fill(c, '#5a5040'); speckle(c, r, '#6a6050', 10); fill(c, '#e8e0c8', 4, 8, 6, 1); fill(c, '#e8e0c8', 3, 7, 1, 3); fill(c, '#e8e0c8', 10, 7, 1, 3); },
   meat: (c, r) => { fill(c, '#5e2a38'); speckle(c, r, '#a8486e', 18, 2, 1); speckle(c, r, '#c23b4a', 6); speckle(c, r, '#f07aa8', 3); },
 };
 

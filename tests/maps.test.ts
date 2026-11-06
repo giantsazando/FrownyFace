@@ -77,7 +77,7 @@ describe('maps', () => {
             if (e.blocked) expect(SCRIPTS[e.blocked]).toBeDefined();
           }
         }
-        if (map.onEnter) expect(SCRIPTS[map.onEnter.script]).toBeDefined();
+        for (const e of map.onEnter ?? []) expect(SCRIPTS[e.script], e.script).toBeDefined();
       });
     });
   }
@@ -98,6 +98,10 @@ describe('content references', () => {
           SHOPS[s.shop].items.forEach((i) => expect(ITEMS[i]).toBeDefined());
         }
         if ('battle' in s) expect(ENCOUNTER_GROUPS[s.battle], name).toBeDefined();
+        if ('warp' in s) {
+          expect(MAPS[s.warp], name).toBeDefined();
+          expect(solidAt(s.warp, s.x, s.y), `${name} warp target solid`).toBe(false);
+        }
       });
     }
   });

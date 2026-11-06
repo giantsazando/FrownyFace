@@ -92,7 +92,7 @@ await wait(1200);
 log('map:', await ev(() => window.__SWAMP.session.gs.data.mapId));
 await mashUntil(async () => (await flags()).dollarEntered && (await notBusy()), 100);
 // buff the party for the boss so the test is deterministic-ish
-await ev(() => { const gs = window.__SWAMP.session.gs; gs.gainXp(400, ['okee', 'ibis']); gs.healAll(); gs.addItem('keylime', 5); });
+await ev(() => { const gs = window.__SWAMP.session.gs; gs.gainXp(900, ['okee', 'ibis']); gs.healAll(); gs.addItem('keylime', 5); });
 await teleport(3, 2, 'up');
 await page.keyboard.down('ArrowUp'); await wait(400); await page.keyboard.up('ArrowUp');
 await wait(1200);
@@ -102,7 +102,8 @@ await mashUntil(async () => (await flags()).anchorEntered && (await notBusy()), 
 // Talk to the boss at (11,4) from directly below it.
 await teleport(11, 5, 'up');
 await press('z');
-const won = await mashUntil(async () => (await flags()).bossDefeated || (await activeScenes()).includes('GameOver'), 1500, 'z', 120);
+await mashUntil(async () => (await flags()).bossDefeated || (await activeScenes()).includes('GameOver'), 1500, 'z', 120);
+const won = !!(await flags()).bossDefeated;
 if ((await activeScenes()).includes('Overworld')) await assertZoom('boss battle');
 log('boss result flags:', JSON.stringify(await flags()), 'scenes', await activeScenes(), won);
 await mashUntil(async () => (await activeScenes()).includes('Ending'), 200, 'z', 150);

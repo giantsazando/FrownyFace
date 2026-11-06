@@ -46,18 +46,26 @@ export class EndingScene extends Phaser.Scene {
     sound.music('ending');
     const controls = new Controls(this);
     createBattleBackground(this, { colors: ['#0b1e26', '#14303a', '#241a2e'], mode: 1, speed: 0.25, freq: 0.5 }, 320, 240, 0.8);
-    const okee = this.add.sprite(130, 230, 'okee', 0).setScale(2).setOrigin(0.5, 1);
-    const ibis = this.add.sprite(190, 230, 'ibis', 0).setScale(2).setOrigin(0.5, 1).setFlipX(true);
-    this.tweens.add({ targets: [okee, ibis], y: 226, yoyo: true, repeat: -1, duration: 1600, ease: 'Sine.inOut' });
+    const hasDolores = !!session.gs.member('dolores');
+    const okee = this.add.sprite(hasDolores ? 110 : 130, 230, 'okee', 0).setScale(2).setOrigin(0.5, 1);
+    const ibis = this.add.sprite(hasDolores ? 160 : 190, 230, 'ibis', 0).setScale(2).setOrigin(0.5, 1).setFlipX(true);
+    const pals = [okee, ibis];
+    if (hasDolores) pals.push(this.add.sprite(215, 232, 'dolores', 0).setScale(2).setOrigin(0.5, 1).setFlipX(true));
+    this.tweens.add({ targets: pals, y: '-=4', yoyo: true, repeat: -1, duration: 1600, ease: 'Sine.inOut' });
 
     const container = this.add.container(0, 250);
-    LINES.forEach((l, i) => {
+    const lines = [...LINES];
+    if (hasDolores) {
+      lines.splice(lines.indexOf('Brother Ibis ..... himself') + 1, 0, 'Dolores .......... herself');
+      lines.splice(lines.indexOf('Somewhere, a payphone is ringing.'), 0, 'The pond is still. A manatee floats in it,', 'which the HOA has not yet noticed.', '');
+    }
+    lines.forEach((l, i) => {
       const col = l === 'SWAMPLIGHT' ? UI.accent : UI.text;
       const t = text(this, 160, i * 14, l, col).setOrigin(0.5, 0);
       if (l === 'SWAMPLIGHT') t.setScale(2);
       container.add(t);
     });
-    const total = LINES.length * 14 + 260;
+    const total = lines.length * 14 + 260;
 
     // Persist the finished game so Continue lets you wander the quiet town.
     const d = session.gs.data;

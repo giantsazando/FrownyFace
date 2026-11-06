@@ -47,6 +47,16 @@ const TRACKS: Record<string, Track> = {
       if (i % 8 === 4) s.note(midi(pick([67, 73, 66, 72], i / 8)), t, d * 2, 'sine', 0.035, 10);
     },
   },
+  deep: {
+    bpm: 52, steps: 64, detune: -30,
+    play: (s, i, t, d) => {
+      if (i % 32 === 0) s.note(midi(26), t, d * 32, 'sine', 0.09, 1.5);
+      if (i % 32 === 16) s.note(midi(27), t, d * 16, 'sine', 0.05, 2);
+      if (i % 8 === 3) s.noise(t, 0.04, 0.025); // drip
+      if (i % 16 === 10) s.note(midi(pick([74, 73, 80, 67], i / 16)), t, d * 6, 'sine', 0.025, 18);
+      if (i === 44) s.note(midi(86), t, d * 2, 'triangle', 0.015, 30); // something far away
+    },
+  },
   battle: {
     bpm: 148, steps: 32, detune: 0,
     play: (s, i, t, d) => {

@@ -9,7 +9,10 @@ export const TOWN: MapDef = {
   music: 'town',
   darkness: 0.62,
   tint: 0x140a2a,
-  onEnter: { script: 'intro', unless: 'intro' },
+  onEnter: [
+    { script: 'intro', unless: 'intro' },
+    { script: 'lakeHint', requires: 'ibisJoined', unless: 'lakeHint' },
+  ],
   tiles: [
     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     'b..RRRRR....RRRRR....RRRRR....T....T...b',
@@ -54,6 +57,7 @@ export const TOWN: MapDef = {
     { kind: 'sign', x: 38, y: 6, script: 'roadEast', sprite: 'decor_sign' },
     { kind: 'sign', x: 12, y: 21, script: 'pondSign', sprite: 'decor_sign' },
     { kind: 'payphone', x: 22, y: 12 },
+    { kind: 'sign', x: 8, y: 22, script: 'whirlpool', sprite: 'decor_whirlpool', requires: 'ibisJoined' },
     { kind: 'cooler', id: 'townCooler1', x: 13, y: 27, item: 'peanuts' },
     { kind: 'cooler', id: 'townCooler2', x: 37, y: 2, item: 'sunscreen' },
     { kind: 'enemy', id: 't1', x: 29, y: 15, group: 'tourist1', sprite: 'npc_tourist', requires: 'answeredPhone' },

@@ -8,7 +8,8 @@ import { session } from '../systems/state/session';
  *   ?debug=map:plaza1:14:16   jump to a map position
  *   ?debug=battle:boss&lvl=8  start a battle
  *   ?debug=ending             roll credits
- * Optional: &lvl=N sets party level, &ibis=1 adds Brother Ibis, &flags=a,b sets flags.
+ * Optional: &lvl=N sets party level, &ibis=1 adds Brother Ibis, &dolores=1 adds Dolores,
+ * &flags=a,b sets flags.
  */
 export class DebugScene extends Phaser.Scene {
   constructor() {
@@ -24,6 +25,12 @@ export class DebugScene extends Phaser.Scene {
     if (p.get('ibis')) {
       gs.addMember('ibis');
       gs.setFlag('ibisJoined');
+    }
+    if (p.get('dolores')) {
+      gs.addMember('dolores');
+      gs.setFlag('doloresJoined');
+      gs.setFlag('lakeCleared');
+      gs.setFlag('lionfishDefeated');
     }
     if (lvl > 1) gs.gainXp(xpForLevel(lvl), gs.data.party.map((m) => m.id));
     gs.healAll();

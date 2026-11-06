@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ENEMY_MAP_SPRITES, IBIS_FRAMES, NPC_SPRITES, OBJECT_SPRITES, OKEE_FRAMES } from '../src/art/sprites/characters';
+import { DOLORES_FRAMES, ENEMY_MAP_SPRITES, IBIS_FRAMES, NPC_SPRITES, OBJECT_SPRITES, OKEE_FRAMES } from '../src/art/sprites/characters';
 import { PALETTE } from '../src/art/palette';
 import { GLYPHS, glyphRows, wrapText } from '../src/art/fontData';
 
@@ -13,6 +13,7 @@ describe('sprite grids', () => {
   it('okee/ibis frames are 16x16 with palette colors', () => {
     OKEE_FRAMES.forEach((f, i) => check(`okee${i}`, f));
     IBIS_FRAMES.forEach((f, i) => check(`ibis${i}`, f));
+    DOLORES_FRAMES.forEach((f, i) => check(`dolores${i}`, f));
   });
   it('npc + object + enemy sprites are valid', () => {
     for (const [k, g] of Object.entries(NPC_SPRITES)) check(k, g);

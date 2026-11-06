@@ -1,4 +1,4 @@
-export type MemberId = 'okee' | 'ibis';
+export type MemberId = 'okee' | 'ibis' | 'dolores';
 
 export interface Stats {
   maxHp: number;
@@ -45,6 +45,20 @@ export const MEMBERS: Record<MemberId, MemberDef> = {
       { id: 'hymn', level: 1 },
       { id: 'paleomen', level: 4 },
       { id: 'communion', level: 6 },
+    ],
+  },
+  dolores: {
+    id: 'dolores',
+    name: 'Dolores',
+    attackName: 'Bump',
+    skillMenu: 'Tide',
+    base: { maxHp: 60, maxMurk: 14, off: 8, def: 9, spd: 3 },
+    growth: { maxHp: 11, maxMurk: 3, off: 2.2, def: 2.4, spd: 0.8 },
+    skills: [
+      { id: 'seagrass', level: 1 },
+      { id: 'undertow', level: 1 },
+      { id: 'scarshield', level: 3 },
+      { id: 'deepcall', level: 8 },
     ],
   },
 };

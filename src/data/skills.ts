@@ -17,7 +17,7 @@ export interface SkillDef {
   text: string; // {user} {target}
 }
 
-export type StatusId = 'sunburn' | 'weak' | 'guarded' | 'slow';
+export type StatusId = 'sunburn' | 'venom' | 'weak' | 'guarded' | 'slow';
 
 export const SKILLS: Record<string, SkillDef> = {
   deathroll: {
@@ -38,7 +38,7 @@ export const SKILLS: Record<string, SkillDef> = {
   },
   prophesy: {
     id: 'prophesy', name: 'Prophesy', cost: 3, target: 'ally', healFlat: 34, cure: true,
-    desc: 'Heal one ally, cure burns.', text: '{user} foretells that {target} will be fine. It comes true.',
+    desc: 'Heal one ally, cure burns and venom.', text: '{user} foretells that {target} will be fine. It comes true.',
   },
   hymn: {
     id: 'hymn', name: 'Garbage Hymn', cost: 5, target: 'allEnemies', status: { id: 'weak', turns: 3 },
@@ -51,5 +51,21 @@ export const SKILLS: Record<string, SkillDef> = {
   communion: {
     id: 'communion', name: 'Communion', cost: 10, target: 'allAllies', heal: 0.5, revive: true,
     desc: 'Heal and revive all.', text: '{user} breaks a stale dinner roll and shares it.',
+  },
+  seagrass: {
+    id: 'seagrass', name: 'Seagrass', cost: 6, target: 'allAllies', heal: 0.25,
+    desc: 'Heals the whole party a little.', text: '{user} shares a mouthful of seagrass. It is mostly seagrass.',
+  },
+  undertow: {
+    id: 'undertow', name: 'Undertow', cost: 7, target: 'allEnemies', power: 1.1,
+    desc: 'Hits all enemies.', text: '{user} rolls over. The current goes with her.',
+  },
+  scarshield: {
+    id: 'scarshield', name: 'Scar Shield', cost: 5, target: 'allAllies', status: { id: 'guarded', turns: 2 },
+    desc: 'Party defense up for 2 turns.', text: '{user} shows everyone her propeller scars. Everyone feels tougher, somehow.',
+  },
+  deepcall: {
+    id: 'deepcall', name: 'Deep Call', cost: 9, target: 'enemy', power: 2.1,
+    desc: 'A low song. Massive damage.', text: '{user} sings the low song. {target} hears it in its bones.',
   },
 };

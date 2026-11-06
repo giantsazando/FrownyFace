@@ -20,6 +20,7 @@ export interface MapDef {
   music: string;
   darkness: number; // 0..1 overlay alpha
   tint: number; // darkness colour
-  onEnter?: { script: string } & Cond;
+  /** First entry whose condition holds runs when the map loads. */
+  onEnter?: ({ script: string } & Cond)[];
   entities: Entity[];
 }

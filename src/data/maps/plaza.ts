@@ -9,7 +9,7 @@ export const PLAZA1: MapDef = {
   music: 'plaza',
   darkness: 0.66,
   tint: 0x0a1a1a,
-  onEnter: { script: 'plazaEnter', unless: 'plazaEntered' },
+  onEnter: [{ script: 'plazaEnter', unless: 'plazaEntered' }],
   tiles: [
     'w'.repeat(30),
     W('nnnnnWWWnnnnnWWWWWnnnnnWeeWW'),
@@ -62,7 +62,7 @@ export const PLAZA2: MapDef = {
   music: 'plaza',
   darkness: 0.7,
   tint: 0x1a0a1a,
-  onEnter: { script: 'dollarEnter', unless: 'dollarEntered' },
+  onEnter: [{ script: 'dollarEnter', unless: 'dollarEntered' }],
   tiles: [
     'w'.repeat(30),
     W('WWQWWWWWWnnnnnnnnnnWWWWWWWWW'),
@@ -117,7 +117,7 @@ export const PLAZA3: MapDef = {
   music: 'dread',
   darkness: 0.7,
   tint: 0x1a0008,
-  onEnter: { script: 'anchorEnter', unless: 'anchorEntered' },
+  onEnter: [{ script: 'anchorEnter', unless: 'anchorEntered' }],
   tiles: [
     'w'.repeat(24),
     W24('n'.repeat(22)),

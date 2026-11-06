@@ -30,6 +30,11 @@ Click **More info**, then **Run anyway**. Saves are kept between launches.
   costume. Shop at Bait & Vape. Payphones heal and save.
 - **Everglow Plaza** (dungeon, 3 floors): Food Court → Dollar Paradise → Bellweather's.
   Recruit **Brother Ibis**, a white ibis who eats garbage and therefore hears it.
+- **Under the Pond** (optional dungeon, opens after Brother Ibis joins): dive into the whirlpool
+  in Okee's own pond. Three pitch-dark drain floors with Walking Catfish, Apple Snail Broods and
+  Waterlogged Dolls, an underwater payphone, and venom. At the bottom: **The Lionfish**, somebody's
+  flushed pet that never stopped growing. Beat it to free **Dolores**, a scarred manatee who joins
+  as a tanky third party member (Seagrass heals, Undertow, Scar Shield, Deep Call).
 - **Enemies**: Sunburnt Tourist, Lost Snowbird, Sentient Takeout Bag, Feral Shopping Cart,
   Cold-Stunned Iguana, Burmese Python, Lovebug Swarm, and the boss, **The Anchor Tenant**.
 - **Combat**: first-person, turn-based, over psychedelic shader backgrounds.
@@ -69,6 +74,7 @@ npm run build                    # static web build in dist/
 npm run dist:win                 # Windows portable .exe in release/ (run on Windows)
 node scripts/screenshots.mjs     # screenshots of key screens (needs Playwright + Chromium)
 node scripts/playthrough.mjs     # automated run: intro → payphone → plaza → Ibis → boss → ending
+node scripts/lake-playthrough.mjs  # automated run of the pond dungeon → Lionfish → Dolores joins
 ```
 
 ### Releasing a new .exe
@@ -87,4 +93,6 @@ The app icon (`build/icon.png`) is generated from Okee's sprite: `npm run icon`.
 
 - `?debug=map:plaza1:14:16&ibis=1&flags=intro,answeredPhone`: jump to a map position
 - `?debug=battle:boss&lvl=8&ibis=1`: start a battle (groups in `src/data/enemies.ts`)
+- `?debug=map:drain1:5:2&ibis=1&lvl=9&flags=intro,answeredPhone,lakeHint`: jump into the pond dungeon
+- `&dolores=1`: start with Dolores in the party
 - `?debug=ending`: roll credits

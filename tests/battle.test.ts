@@ -111,4 +111,34 @@ describe('BattleEngine', () => {
     const eng = new BattleEngine([okee()], ['tourist', 'tourist']);
     expect(eng.enemies.map((e) => e.name)).toEqual(['Sunburnt Tourist A', 'Sunburnt Tourist B']);
   });
+
+  it('venom ticks at end of round and items cure it', () => {
+    const eng = new BattleEngine([okee(5)], ['tourist'], seq([0.5]));
+    const p = eng.party[0];
+    p.statuses.venom = 3;
+    const ev = eng.endRound();
+    expect(ev.some((e) => e.t === 'damage' && e.target === 'okee')).toBe(true);
+    eng.beginRound([{ actor: 'okee', kind: 'item', item: 'sunscreen', target: 'okee' }], 'party');
+    eng.next();
+    expect(p.statuses.venom).toBeUndefined();
+  });
+
+  it('lionfish spine attacks can inflict venom', () => {
+    // rng 0.1 -> picks the first move (venom spine) and never misses at 0.1 > 1/18
+    const eng = new BattleEngine([okee(12)], ['lionfish'], seq([0.1]));
+    eng.beginRound([], 'enemy');
+    eng.next();
+    expect(eng.party[0].statuses.venom).toBeGreaterThan(0);
+  });
+
+  it('supports a three-member party', () => {
+    const mk = (id: 'okee' | 'ibis' | 'dolores') => {
+      const s = statsAt(id, 5);
+      return { id, level: 5, hp: s.maxHp, murk: s.maxMurk, ...s };
+    };
+    const eng = new BattleEngine([mk('okee'), mk('ibis'), mk('dolores')], ['catfish'], seq([0.5]));
+    eng.beginRound([{ actor: 'dolores', kind: 'skill', skill: 'scarshield' }], 'party');
+    eng.next();
+    expect(eng.party.every((p) => p.statuses.guarded === 2)).toBe(true);
+  });
 });

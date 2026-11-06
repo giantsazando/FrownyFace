@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { addGridSheet, buildFont, buildLightTexture, paintTexture } from '../art/pixelArt';
-import { ENEMY_MAP_SPRITES, IBIS_FRAMES, NPC_SPRITES, OBJECT_SPRITES, OKEE_FRAMES } from '../art/sprites/characters';
+import { DOLORES_FRAMES, ENEMY_MAP_SPRITES, IBIS_FRAMES, NPC_SPRITES, OBJECT_SPRITES, OKEE_FRAMES } from '../art/sprites/characters';
 import { BATTLERS } from '../art/sprites/battlers';
 import { DECOR } from '../art/sprites/decor';
 import { paintTileset } from '../art/sprites/tiles';
@@ -17,6 +17,7 @@ export class BootScene extends Phaser.Scene {
 
     addGridSheet(this, 'okee', OKEE_FRAMES);
     addGridSheet(this, 'ibis', IBIS_FRAMES);
+    addGridSheet(this, 'dolores', DOLORES_FRAMES);
     for (const [k, g] of Object.entries(NPC_SPRITES)) addGridSheet(this, `npc_${k}`, [g]);
     for (const [k, fs] of Object.entries(OBJECT_SPRITES)) addGridSheet(this, `obj_${k}`, fs);
     for (const [k, fs] of Object.entries(ENEMY_MAP_SPRITES)) addGridSheet(this, `enemy_${k}`, fs);
@@ -30,6 +31,7 @@ export class BootScene extends Phaser.Scene {
     this.anims.create({ key: 'okee-down', frames: this.anims.generateFrameNumbers('okee', { frames: [0, 1] }), frameRate: 6, repeat: -1 });
     this.anims.create({ key: 'okee-up', frames: this.anims.generateFrameNumbers('okee', { frames: [2, 3] }), frameRate: 6, repeat: -1 });
     this.anims.create({ key: 'okee-side', frames: this.anims.generateFrameNumbers('okee', { frames: [4, 5] }), frameRate: 6, repeat: -1 });
+    this.anims.create({ key: 'dolores-walk', frames: this.anims.generateFrameNumbers('dolores', { frames: [0, 1] }), frameRate: 4, repeat: -1 });
     this.anims.create({ key: 'ibis-walk', frames: this.anims.generateFrameNumbers('ibis', { frames: [0, 1] }), frameRate: 6, repeat: -1 });
 
     const params = new URLSearchParams(location.search);

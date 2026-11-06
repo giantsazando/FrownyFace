@@ -24,7 +24,7 @@ export const ITEMS: Record<string, ItemDef> = {
     battle: true, field: true, target: 'ally', murk: 12, text: '{target} downs a Cafecito. Their pupils dilate.',
   },
   sunscreen: {
-    id: 'sunscreen', name: 'SPF 100', desc: 'Cures burns. Heals 15 HP.', price: 6,
+    id: 'sunscreen', name: 'SPF 100', desc: 'Cures burns and venom. Heals 15 HP.', price: 6,
     battle: true, field: true, target: 'ally', heal: 15, cure: true, text: '{user} slathers {target} in SPF 100.',
   },
   keylime: {

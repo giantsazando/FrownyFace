@@ -18,11 +18,14 @@ export type Step =
   | { flash: number }
   | { wait: number }
   | { music: string }
+  | { warp: string; x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' }
   | { ending: true };
 
 const ANON = '???';
 const IBIS = 'Brother Ibis';
 const TENANT = 'The Anchor Tenant';
+const DOLORES = 'Dolores';
+const LIONFISH = 'The Lionfish';
 
 export const SCRIPTS: Record<string, Step[]> = {
   intro: [
@@ -116,6 +119,7 @@ export const SCRIPTS: Record<string, Step[]> = {
       then: [
         { say: 'Weird. I checked my photo again. There are two blurs now. One yellow... and one white, with a long curvy beak.', who: 'Tyler' },
         { say: 'Nobody believes me. That is okay. I believe me.', who: 'Tyler' },
+        { if: 'lakeCleared', then: [{ say: 'Oh, and there is a big gray one now too. It looks... happy?', who: 'Tyler' }] },
       ],
       else: [
         { say: 'Whoa. Whoa! No way. You\'re... I have a PICTURE of you!', who: 'Tyler' },
@@ -140,7 +144,16 @@ export const SCRIPTS: Record<string, Step[]> = {
     { say: '...I\'m a manatee.', who: 'Manatee?' },
     { say: '...You\'re a gator.', who: 'Manatee?' },
     { say: 'We should not be up here on the land, you and me. There is a boat propeller in my dreams every night.', who: 'Manatee?' },
-    { if: 'ibisJoined', then: [{ say: 'Is that a bird with you? Birds are fine. Birds can go anywhere.', who: 'Manatee?' }] },
+    {
+      if: 'lakeCleared',
+      then: [
+        { say: '...You found her. Dolores.', who: 'Manatee?' },
+        { say: 'I have been wearing this costume so she would have someone to look for.', who: 'Manatee?' },
+        { say: 'I think I can take it off now.', who: 'Manatee?' },
+        'He does not take it off.',
+      ],
+      else: [{ if: 'ibisJoined', then: [{ say: 'Is that a bird with you? Birds are fine. Birds can go anywhere. Not down, though. Do not go down.', who: 'Manatee?' }] }],
+    },
   ],
   roadWest: ['ROAD CLOSED.', 'The sign is older than the road.'],
   roadEast: ['YOU ARE NOW LEAVING PALMETTO HOLLOW.', 'Beyond the sign, the road ends in a hedge. No one has ever left. No one has ever tried.'],
@@ -189,4 +202,79 @@ export const SCRIPTS: Record<string, Step[]> = {
     { say: 'Go home, Okee. Get back in your pond. The town will forget you were here tonight. That is how it should be.', who: IBIS },
     { ending: true },
   ],
+
+  // --- Under the Pond -------------------------------------------------------
+  lakeHint: [
+    { wait: 300 },
+    { say: 'Okee. Wait.', who: IBIS },
+    { say: 'Your pond. Listen to it.', who: IBIS },
+    { shake: true },
+    { say: 'Something under it has been eating what the town throws away. For years. The garbage in the plaza was afraid of it.', who: IBIS },
+    { say: 'Now it is hungry for things the town did not throw away.', who: IBIS },
+    '(The water in Okee\'s pond has started to turn. You could dive in, if you wanted to.)',
+    { set: 'lakeHint' },
+  ],
+  whirlpool: [
+    {
+      if: 'lakeCleared',
+      then: ['The pond is still now. Somewhere far below, a drain gurgles politely.'],
+      else: ['The water in your pond is turning slowly, like something enormous is breathing at the bottom.'],
+    },
+    {
+      choice: ['Dive in', 'Not yet'],
+      then: [[{ sfx: 'door' }, { warp: 'drain1', x: 5, y: 2, facing: 'right' }], ['You back away from the edge. The water keeps turning.']],
+    },
+  ],
+  drainEnter: [
+    'Under the pond there is a drain. Under the drain there is a pipe.',
+    'You have lived above it for forty years and never once looked down.',
+    'It is very dark. Something down here is counting.',
+    { if: 'ibisJoined', then: [{ say: 'Stay close. I cannot hear any garbage down here. It has all been eaten.', who: IBIS }] },
+    { set: 'drainEntered' },
+  ],
+  drainNote1: ['Scratched into the concrete, at the height of a grown man\'s hand:', '"I FLUSHED IT WHEN IT GOT TOO BIG. I AM SORRY. I AM SORRY. I AM SO"'],
+  drainNote2: ['Fish bones, arranged in a spiral.', 'The spiral points down.'],
+  drainNote3: ['A drowned aquarium sign: "TROPICAL PARADISE PETS - NO REFUNDS."', 'Someone has added, in marker: "NO RETURNS EITHER."'],
+  spawnEnter: ['The pipes here are warm.', 'The walls are breathing.', { set: 'spawnEntered' }],
+  eggsNote: ['Hundreds of tiny pink eggs cover the wall.', 'When you lean closer, they all turn to look at you at the same time.'],
+  flyersNote: ['MISSING flyers, pasted over each other in layers.', 'A dog named Biscuit. A cat named Pepper. A turtle named Mr. Slow.', 'The oldest one, at the bottom, is a manatee. The photo has been touched so many times it is almost white.'],
+  doorNote: [
+    'Down through the grate, something is tapping on the other side of the dark. Tap. Tap. Tap.',
+    { if: 'ibisJoined', then: [{ say: 'Use the payphone first, Okee. Whatever is down there is very, very large.', who: IBIS }] },
+  ],
+  larderEnter: [
+    'The pipe opens into a cavern of bones and aquarium gravel.',
+    'Plastic castles. A little treasure chest that opens and closes on its own. A deep-sea diver, face down.',
+    { set: 'larderEntered' },
+  ],
+  larderNote: ['A feeding schedule, laminated, nailed into the coral:', 'MONDAY: TILAPIA. TUESDAY: SNAILS. WEDNESDAY: BISCUIT. THURSDAY: PEPPER.', 'The rest of the week has been chewed off.'],
+  lionfishFight: [
+    'Something is floating in the middle of the cavern. Fins like a paper lantern. Spines like a hundred needles.',
+    { say: 'A lionfish. Somebody\'s pet, once. Somebody poured it down a drain when it got too expensive to feed.', who: IBIS },
+    { say: 'It has eaten everything that belongs in these waters. It never stopped growing.', who: IBIS },
+    'Behind it, tangled in a cage of spines, something big and gray moves very slowly.',
+    { shake: true },
+    { say: '...BEAUTIFUL...', who: LIONFISH },
+    { say: 'THEY SAID I WAS BEAUTIFUL. THEY TAPPED THE GLASS. TAP. TAP. TAP.', who: LIONFISH },
+    { say: 'NOBODY TAPS THE GLASS ANYMORE.', who: LIONFISH },
+    'Okee does not tap the glass.',
+    { battle: 'lionfish' },
+    { set: 'lionfishDefeated' },
+    'The Lionfish shudders. Its spines go limp, one by one, and it sinks into the gravel. Aquarium-sized again.',
+    'The cage of spines falls apart.',
+    { say: '...Oh. Oh, honey. You came all the way down here.', who: DOLORES },
+    { say: 'I am Dolores. Manatee. I came up the canals one cold winter looking for warm water, and the drain took me.', who: DOLORES },
+    { say: 'I have been down here since... what year is it?', who: DOLORES },
+    { say: 'No. Do not tell me.', who: DOLORES },
+    { say: 'That fish ate everything down here but me. I was too big to swallow and too slow to run. So it kept me. Like a pet.', who: DOLORES },
+    { say: 'You let me out. That means I go where you go now. That is how it works with gators, right?', who: DOLORES },
+    { join: 'dolores' },
+    { sfx: 'join' },
+    'Dolores joined your party!',
+    { set: 'doloresJoined' },
+    { set: 'lakeCleared' },
+    { say: 'Let us go home, Okee. Up. Toward the light, such as it is.', who: IBIS },
+    { warp: 'town', x: 10, y: 22, facing: 'down' },
+  ],
+  doloresHello: [{ say: 'Take your time, honey. I have been waiting forty years. I can wait a minute.', who: DOLORES }],
 };

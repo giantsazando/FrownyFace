@@ -45,6 +45,17 @@ export const TILE_DEFS: Record<string, TileDef> = {
   e: { tiles: ['escalator'], solid: false },
   m: { tiles: ['meat'], solid: false },
   Q: { tiles: ['doorway'], solid: false },
+  // Under the Pond
+  k: { tiles: ['wetConcrete0', 'wetConcrete1', 'wetConcrete0'], solid: false },
+  K: { tiles: ['drainWall'], solid: true },
+  u: { tiles: ['murk'], solid: true },
+  h: { tiles: ['shallows'], solid: false },
+  o: { tiles: ['fungus'], solid: false, light: true },
+  j: { tiles: ['grate'], solid: false },
+  a: { tiles: ['rubble'], solid: true },
+  z: { tiles: ['eggs'], solid: true },
+  X: { tiles: ['fleshCoral'], solid: true },
+  y: { tiles: ['boneSand0', 'boneSand1', 'boneSand0'], solid: false },
 };
 
 /** All painted tile names in a stable order (index = tileset frame). */

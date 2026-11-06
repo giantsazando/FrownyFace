@@ -146,6 +146,68 @@ export const ENEMIES: Record<string, EnemyDef> = {
   },
 };
 
+
+// --- Under the Pond (optional dungeon) -------------------------------------
+Object.assign(ENEMIES, {
+  catfish: {
+    id: 'catfish', name: 'Walking Catfish', level: 7, hp: 58, off: 17, def: 9, spd: 8, xp: 26, money: 11,
+    art: 'catfish', mapSprite: 'enemy_catfish',
+    intro: 'A Walking Catfish drags itself out of the dark on its fins. It should not be able to do that.',
+    defeat: 'The Walking Catfish walked away. It will not stop walking.',
+    moves: [
+      { weight: 3, kind: 'attack', power: 1.1, text: '{user} slaps {target} with a wet whisker!' },
+      { weight: 1, kind: 'status', status: { id: 'slow', turns: 2 }, text: "{user} wraps a whisker around {target}'s ankle. {target} is slowed!" },
+      { weight: 1, kind: 'nothing', text: '{user} breathes air. Loudly. Wetly.' },
+      { weight: 1, kind: 'nothing', text: '{user} takes one more step toward you than it did a moment ago.' },
+    ],
+    bg: { colors: ['#1d3a33', '#4a6b3a', '#0b0710'], mode: 0, speed: 0.5, freq: 0.9 },
+    drop: { item: 'peanuts', chance: 0.3 },
+  },
+  snail: {
+    id: 'snail', name: 'Apple Snail Brood', level: 7, hp: 48, off: 15, def: 12, spd: 4, xp: 24, money: 6,
+    art: 'snail', mapSprite: 'enemy_snail',
+    intro: 'An Apple Snail Brood oozes into view. Its eggs are bright pink. They are all looking at you.',
+    defeat: 'The Apple Snail Brood withdrew into its shell. The eggs keep looking.',
+    moves: [
+      { weight: 2, kind: 'attackAll', power: 0.6, text: '{user} bursts a cluster of pink eggs!' },
+      { weight: 1, kind: 'status', status: { id: 'weak', turns: 2 }, text: '{target} hears the eggs counting. {target} feels weak.' },
+      { weight: 1, kind: 'heal', heal: 18, text: '{user} retreats into its shell and comes out a little bigger.' },
+      { weight: 1, kind: 'nothing', text: '{user} lays more eggs. They are already watching.' },
+    ],
+    bg: { colors: ['#f07aa8', '#4a2c1a', '#a8486e'], mode: 2, speed: 0.8, freq: 1.5 },
+    drop: { item: 'coffee', chance: 0.25 },
+  },
+  doll: {
+    id: 'doll', name: 'Waterlogged Doll', level: 8, hp: 52, off: 18, def: 7, spd: 11, xp: 30, money: 3,
+    art: 'doll', mapSprite: 'enemy_doll',
+    intro: 'A Waterlogged Doll sits up in the shallows. Its one eye opens with a click.',
+    defeat: 'The Waterlogged Doll lay back down. Its eye stayed open.',
+    moves: [
+      { weight: 3, kind: 'attack', power: 1.2, text: "{user} asks {target} to play. It isn't a question." },
+      { weight: 1, kind: 'status', status: { id: 'weak', turns: 2 }, text: "{user} whispers {target}'s name. {target} never told it. {target} feels weak." },
+      { weight: 1, kind: 'nothing', text: "{user}'s eye rolls back into its head. Then forward. Then back." },
+      { weight: 1, kind: 'nothing', text: '{user} hums the plaza muzak, slightly too slow.' },
+    ],
+    bg: { colors: ['#3fb8af', '#f4efe1', '#0b1e26'], mode: 1, speed: 0.35, freq: 1.2 },
+    drop: { item: 'sunscreen', chance: 0.3 },
+  },
+  lionfish: {
+    id: 'lionfish', name: 'The Lionfish', level: 10, hp: 520, off: 20, def: 10, spd: 9, xp: 220, money: 300,
+    art: 'lionfish', mapSprite: 'decor_lionfishMap', boss: true,
+    intro: 'The Lionfish unfurls. Every fin is a fan of needles. Every needle is wet.',
+    defeat: 'The Lionfish sinks into the gravel, aquarium-sized again.',
+    moves: [
+      { weight: 3, kind: 'attack', power: 1.3, status: { id: 'venom', turns: 3 }, text: '{user} gores {target} with a venomous spine!' },
+      { weight: 2, kind: 'attackAll', power: 0.85, text: '{user} flares every fin at once. The water fills with spines!' },
+      { weight: 1, kind: 'statusAll', status: { id: 'venom', turns: 2 }, text: '{user} exhales a red cloud. Everyone tastes copper.' },
+      { weight: 1, kind: 'heal', heal: 45, text: '{user} swallows something native, whole. It looks healthier.' },
+      { weight: 1, kind: 'nothing', text: '{user} presses its face against the dark like aquarium glass. Tap. Tap. Tap.' },
+      { weight: 1, kind: 'nothing', text: '{user} opens its mouth. There are human teeth in it. Some of them are fillings.' },
+    ],
+    bg: { colors: ['#c23b4a', '#f4efe1', '#0b0710'], mode: 1, speed: 1.6, freq: 1.8 },
+  },
+} satisfies Record<string, EnemyDef>);
+
 export const ENCOUNTER_GROUPS: Record<string, string[]> = {
   tourist1: ['tourist'],
   tourist2: ['tourist', 'tourist'],
@@ -161,4 +223,11 @@ export const ENCOUNTER_GROUPS: Record<string, string[]> = {
   lovebugs1: ['lovebugs', 'lovebugs'],
   pythonBag: ['takeout', 'python'],
   boss: ['boss'],
+  catfish1: ['catfish'],
+  snails: ['snail', 'snail'],
+  doll1: ['doll'],
+  dollCat: ['doll', 'catfish'],
+  brood: ['snail', 'catfish'],
+  dolls: ['doll', 'doll'],
+  lionfish: ['lionfish'],
 };

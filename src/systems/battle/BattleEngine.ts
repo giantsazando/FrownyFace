@@ -64,6 +64,7 @@ export type Advantage = 'party' | 'enemy' | 'none';
 
 const STATUS_NAMES: Record<StatusId, string> = {
   sunburn: 'burning',
+  venom: 'poisoned',
   weak: 'weakened',
   guarded: 'cold-blooded',
   slow: 'slowed',
@@ -223,6 +224,11 @@ export class BattleEngine {
         ev.push({ t: 'msg', text: `${c.name} is burning! ${dmg} damage.` });
         this.applyDamage(c, dmg, ev, false);
       }
+      if (c.statuses.venom && !c.ko) {
+        const dmg = Math.max(3, Math.round(4 + c.hp.max * 0.07));
+        ev.push({ t: 'msg', text: `Venom burns in ${c.name}'s veins! ${dmg} damage.` });
+        this.applyDamage(c, dmg, ev, false);
+      }
       for (const s of Object.keys(c.statuses) as StatusId[]) {
         c.statuses[s]! -= 1;
         if (c.statuses[s]! <= 0) {
@@ -269,17 +275,30 @@ export class BattleEngine {
     ev.push({ t: 'heal', target: tgt.key, amount: Math.round(tgt.hp.target - before) });
   }
 
-  private attack(att: Combatant, tgt: Combatant, power: number, ev: BattleEvent[], ignoreDef = false, canCrit = true) {
+  /** Returns true if the attack connected. */
+  private attack(att: Combatant, tgt: Combatant, power: number, ev: BattleEvent[], ignoreDef = false, canCrit = true): boolean {
     ev.push({ t: 'attackAnim', actor: att.key, target: tgt.key });
     const r = this.calcDamage(att, tgt, power, ignoreDef, canCrit);
     if (r.miss) {
       ev.push({ t: 'miss', target: tgt.key });
       ev.push({ t: 'msg', text: `It missed ${tgt.name}!` });
-      return;
+      return false;
     }
     if (r.crit) ev.push({ t: 'msg', text: att.side === 'party' ? 'SMAAAASH!!' : 'A devastating blow!' });
     ev.push({ t: 'msg', text: `${r.amount} damage to ${tgt.name}!` });
     this.applyDamage(tgt, r.amount, ev, r.crit);
+    return true;
+  }
+
+  private cure(t: Combatant, ev: BattleEvent[]): void {
+    if (t.statuses.sunburn) {
+      delete t.statuses.sunburn;
+      ev.push({ t: 'msg', text: `${t.name} stops burning.` });
+    }
+    if (t.statuses.venom) {
+      delete t.statuses.venom;
+      ev.push({ t: 'msg', text: `The venom leaves ${t.name}.` });
+    }
   }
 
   private retarget(key: string | undefined, side: Side): Combatant | undefined {
@@ -372,10 +391,7 @@ export class BattleEngine {
         this.heal(t, amt, ev);
         ev.push({ t: 'msg', text: `${t.name} recovers ${amt} HP.` });
       }
-      if (sk.cure && t.statuses.sunburn) {
-        delete t.statuses.sunburn;
-        ev.push({ t: 'msg', text: `${t.name} stops burning.` });
-      }
+      if (sk.cure) this.cure(t, ev);
       if (sk.status) this.inflict(t, sk.status.id, sk.status.turns, ev);
     }
   }
@@ -423,10 +439,7 @@ export class BattleEngine {
         ev.push({ t: 'murk', target: t.key, amount: t.murk - before });
         ev.push({ t: 'msg', text: `${t.name} recovers ${t.murk - before} Murk.` });
       }
-      if (it.cure && t.statuses.sunburn) {
-        delete t.statuses.sunburn;
-        ev.push({ t: 'msg', text: `${t.name} stops burning.` });
-      }
+      if (it.cure) this.cure(t, ev);
     }
   }
 
@@ -454,11 +467,11 @@ export class BattleEngine {
         break;
       case 'attack':
         ev.push({ t: 'msg', text: fmt(move.text, e, target) });
-        this.attack(e, target, move.power ?? 1, ev);
+        if (this.attack(e, target, move.power ?? 1, ev) && move.status) this.inflict(target, move.status.id, move.status.turns, ev);
         break;
       case 'attackAll':
         ev.push({ t: 'msg', text: fmt(move.text, e) });
-        for (const t of living) this.attack(e, t, move.power ?? 1, ev);
+        for (const t of living) if (this.attack(e, t, move.power ?? 1, ev) && move.status) this.inflict(t, move.status.id, move.status.turns, ev);
         break;
       case 'status':
         ev.push({ t: 'msg', text: fmt(move.text, e, target) });

@@ -38,7 +38,7 @@ interface PartyBox {
   baseY: number;
 }
 
-const STATUS_TAG: Record<string, string> = { sunburn: 'BURN', weak: 'WEAK', slow: 'SLOW', guarded: 'COLD' };
+const STATUS_TAG: Record<string, string> = { sunburn: 'BURN', venom: 'VENM', weak: 'WEAK', slow: 'SLOW', guarded: 'COLD' };
 
 export class BattleScene extends Phaser.Scene {
   private engine!: BattleEngine;
