@@ -151,6 +151,7 @@ export const SCRIPTS: Record<string, Step[]> = {
         { say: 'I have been wearing this costume so she would have someone to look for.', who: 'Manatee?' },
         { say: 'I think I can take it off now.', who: 'Manatee?' },
         'He does not take it off.',
+        { say: '...Shit. The zipper is stuck.', who: 'Manatee?' },
       ],
       else: [{ if: 'ibisJoined', then: [{ say: 'Is that a bird with you? Birds are fine. Birds can go anywhere. Not down, though. Do not go down.', who: 'Manatee?' }] }],
     },
